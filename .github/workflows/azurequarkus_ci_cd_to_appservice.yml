@@ -1,7 +1,7 @@
 name: Pet Store App CI/CD to Azure App Service
   
 env:
-  AZURE_CONTAINER_REGISTRY: azurequarkus.azurecr.io
+  AZURE_CONTAINER_REGISTRY: azurequarkuscr.azurecr.io
   AZURE_CONTAINER_REGISTRY_USERNAME: azurequarkuscr
   
 on:
@@ -28,7 +28,7 @@ jobs:
 #        username: ${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }}
 #        password: ${{ secrets.AZUREQUARKUSCRSECRET }}
     - name: Push Docker image to Azure Container Registry    
-      run: ./mvnw package -DskipTests -Dquarkus.container-image-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.username=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.password=${{ env.secrets.AZUREQUARKUSCRSECRET }}
+      run: ./mvnw package -DskipTests -Dquarkus.container-image-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.registry=${{ env.AZURE_CONTAINER_REGISTRY }} -Dquarkus.container-image.username=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.password=${{ env.secrets.AZUREQUARKUSCRSECRET }}
 #      run: |
 #        docker build petstore/petstoreapp -t ${{env.AZURE_CONTAINER_REGISTRY}}/petstoreapp:latest -t ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:${{ github.sha }}
 #        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:${{ github.sha }}
