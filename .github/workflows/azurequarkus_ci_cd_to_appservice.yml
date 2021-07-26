@@ -1,0 +1,37 @@
+name: Pet Store App CI/CD to Azure App Service
+  
+env:
+  AZURE_CONTAINER_REGISTRY: azurequarkus.azurecr.io
+  AZURE_CONTAINER_REGISTRY_USERNAME: azurequarkuscr
+  
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v2
+      name: Building Azure Quarkus App with Java 11
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Run Maven build
+      working-directory: azure-quarkus
+      run: ./mvnw -B --update-snapshots clean verify
+#    - uses: azure/docker-login@v1
+#      name: Build Docker image
+#      with:
+#        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+#        username: ${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }}
+#        password: ${{ secrets.AZUREQUARKUSCRSECRET }}
+    - name: Push Docker image to Azure Container Registry    
+      working-directory: azure-quarkus
+      run: ./mvnw package -DskipTests -Dquarkus.container-image-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.username=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.password=${{ env.secrets.AZUREQUARKUSCRSECRET }}
+#      run: |
+#        docker build petstore/petstoreapp -t ${{env.AZURE_CONTAINER_REGISTRY}}/petstoreapp:latest -t ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:${{ github.sha }}
+#        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:${{ github.sha }}
+#        docker push  ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:latest 
