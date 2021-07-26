@@ -21,15 +21,5 @@ jobs:
         distribution: 'adopt'
     - name: Run Maven build
       run: ./mvnw -B clean verify
-#    - uses: azure/docker-login@v1
-#      name: Build Docker image
-#      with:
-#        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
-#        username: ${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }}
-#        password: ${{ secrets.AZUREQUARKUSCRSECRET }}
     - name: Push Docker image to Azure Container Registry    
-      run: ./mvnw -X package -DskipTests -Dquarkus.container-image-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.registry=${{ env.AZURE_CONTAINER_REGISTRY }} -Dquarkus.container-image.group="" -Dquarkus.container-image.name=azurequarkus -Dquarkus.container-image.username=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.password=${{ secrets.AZUREQUARKUSCRSECRET }}
-#      run: |
-#        docker build petstore/petstoreapp -t ${{env.AZURE_CONTAINER_REGISTRY}}/petstoreapp:latest -t ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:${{ github.sha }}
-#        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:${{ github.sha }}
-#        docker push  ${{ env.AZURE_CONTAINER_REGISTRY }}/petstoreapp:latest 
+      run: ./mvnw package -DskipTests -Dquarkus.container-image-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.registry=${{ env.AZURE_CONTAINER_REGISTRY }} -Dquarkus.container-image.group="" -Dquarkus.container-image.name=azurequarkus -Dquarkus.container-image.additional-tags=latest -Dquarkus.container-image.username=${{ env.AZURE_CONTAINER_REGISTRY_USERNAME }} -Dquarkus.container-image.password=${{ secrets.AZUREQUARKUSCRSECRET }}
